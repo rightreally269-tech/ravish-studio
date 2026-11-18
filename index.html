@@ -1,0 +1,632 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#030303">
+<meta name="description" content="RAVISH is an AI-native film studio creating cinematic brand films, product launches, and campaigns.">
+<meta property="og:title" content="RAVISH — AI-native film studio">
+<meta property="og:description" content="Ambitious ideas. Cinematic films. Human-directed, AI-powered.">
+<title>RAVISH — AI-native video production</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Instrument+Serif:ital@0;1&family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;1,9..144,300;1,9..144,400&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #000;
+  --fg: #ffffff;
+  --muted: #FFFFFF8C;
+  --faint: #FFFFFF52;
+  --line: #FFFFFF14;
+  --line-2: #FFFFFF24;
+  --card: #FFFFFF08;
+  --accent: #f5b864;
+  --accent-strong: #ffb347;
+  --accent-soft: #F5B8641F;
+  --font-sans: "Inter", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-display: "Fraunces", "Instrument Serif", Georgia, serif;
+  --font-serif: "Instrument Serif", Georgia, serif;
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, monospace;
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; background: var(--bg); }
+#scroll-progress {
+  position: fixed; inset: 0 auto auto 0; width: 0%; height: 2px;
+  z-index: 100; background: linear-gradient(90deg, var(--accent), #fff0c2);
+  box-shadow: 0 0 12px #f5b86499; transform-origin: left;
+}
+.cursor-dot, .cursor-ring {
+  position: fixed; top: 0; left: 0; z-index: 99; pointer-events: none;
+  border-radius: 50%; opacity: 0; transform: translate(-50%, -50%);
+}
+.cursor-dot { width: 6px; height: 6px; background: var(--accent); }
+.cursor-ring {
+  width: 34px; height: 34px; border: 1px solid #f5b864a8;
+  background: #f5b8640d; transition: width .22s ease, height .22s ease,
+    background .22s ease, border-color .22s ease, opacity .2s ease;
+}
+body.cursor-active .cursor-dot, body.cursor-active .cursor-ring { opacity: 1; }
+body.cursor-hover .cursor-ring {
+  width: 54px; height: 54px; background: #f5b8641c; border-color: var(--accent);
+}
+@media (hover: none), (pointer: coarse) {
+  .cursor-dot, .cursor-ring { display: none; }
+}
+/* Soft ambient lighting + a subtle pointer-following spotlight */
+:root { --pointer-x: 50vw; --pointer-y: 32vh; }
+body::before {
+  content: ""; position: fixed; inset: 0; z-index: 0; pointer-events: none;
+  background: radial-gradient(520px circle at var(--pointer-x) var(--pointer-y), #f5b86412, transparent 68%);
+  opacity: .9; transition: opacity .25s ease;
+}
+body::after {
+  content: ""; position: fixed; z-index: 0; pointer-events: none;
+  width: 440px; height: 440px; left: -180px; bottom: -210px; border-radius: 50%;
+  background: #f5b86412; filter: blur(100px); animation: lightDrift 12s ease-in-out infinite alternate;
+}
+main, footer, header, .marquee { position: relative; z-index: 1; }
+@keyframes lightDrift { from { transform: translate(0,0) scale(.9); opacity:.55 } to { transform: translate(130px,-90px) scale(1.25); opacity:1 } }
+body { margin: 0; background: var(--bg); color: var(--fg); font: 400 16px/1.55 var(--font-sans); -webkit-font-smoothing: antialiased; }
+a { color: #fff; text-decoration: none; }
+button, a { -webkit-tap-highlight-color: transparent; }
+button { font: inherit; }
+::selection { background: #f5b86466; color: #1a0e00; }
+.wrap { width: min(1560px, calc(100% - 64px)); margin-inline: auto; }
+.mono { font: 10px/1.4 var(--font-mono); letter-spacing: .12em; text-transform: uppercase; color: var(--faint); }
+header { position: fixed; z-index: 20; top: 0; left: 0; right: 0; border-bottom: 1px solid transparent; transition: background .25s,border-color .25s; }
+header.scrolled { background: #000000b8; backdrop-filter: blur(18px); border-color: var(--line); }
+.nav { height: 76px; display: flex; align-items: center; justify-content: space-between; }
+.brand { display: flex; align-items: center; gap: 11px; font-size: 13px; font-weight: 600; letter-spacing: .13em; }
+.brand-mark { width: 25px; height: 25px; border: 1px solid #f5b86499; border-radius: 50%; display: grid; place-items: center; color: var(--accent); font: 16px var(--font-display); }
+.nav-links { display: flex; align-items: center; gap: 30px; color: var(--muted); font-size: 12px; }
+.nav-links a, footer a { transition: color .2s; }
+.nav-links a:hover, footer a:hover { color: var(--accent); }
+.button-primary { display: inline-flex; align-items: center; justify-content: center; background: #FFFFFF; color: #000000; border-radius: 999px; padding: 9px 18px; font-size: 13px; font-weight: 500; transition: transform .2s, background .2s, box-shadow .2s; }
+.button-primary:hover { transform: translateY(-2px); background: #f5b864; box-shadow: 0 0 16px #F5B86455; }
+.button-quiet { display: inline-flex; align-items: center; justify-content: center; gap: 9px; padding: 10px 2px; font-size: 13px; color: #ffffffb3; transition: color .2s, transform .2s; }
+.button-quiet:hover { color: #fff; transform: translateX(3px); }
+.hero { min-height: 850px; padding: 174px 0 78px; position: relative; overflow: hidden; display: flex; flex-direction: column; justify-content: center; }
+.hero { isolation:isolate; background:
+  radial-gradient(ellipse at 76% 58%, #f5b86414 0%, transparent 42%),
+  linear-gradient(90deg, transparent 0%, #ffffff03 50%, transparent 100%); }
+.hero .hero-foot { position:relative; z-index:1; }
+.hero:before {
+  content:""; position:absolute; width:min(1100px, 110vw); height:900px;
+  left:50%; top:50%; transform:translate(-50%,-50%);
+  background:
+    radial-gradient(ellipse at 74% 52%, #fff3d6 0%, #ffd38a 3%, #f5b86499 9%, #f5b86438 22%, transparent 52%),
+    radial-gradient(ellipse at 72% 52%, #f5b86442 0%, #b66a2c20 35%, transparent 68%);
+  filter:blur(30px); pointer-events:none; opacity:.9;
+  animation:heroGlow 7s ease-in-out infinite alternate;
+}
+.hero:after {
+  content:""; position:absolute; z-index:0; pointer-events:none;
+  left:-12%; right:-12%; top:57%; height:3px;
+  background:linear-gradient(90deg, transparent 0%, #f5b86408 20%, #f5b86466 48%, #fff7df 72%, #f5b86455 82%, transparent 100%);
+  box-shadow:0 0 8px #fff4d0, 0 0 22px #f5b864, 0 0 65px #f5b864aa, 0 0 130px #f5b86466;
+  transform-origin:72% 50%;
+  animation:beamBreath 4.8s ease-in-out infinite;
+}
+.hero > .wrap { position:relative; z-index:1; }
+.hero-media { box-shadow:0 10px 30px -10px #00000080, 0 0 38px #f5b86412; }
+@keyframes heroGlow {
+  0% { opacity:.55; filter:blur(42px); transform:translate(-52%,-48%) scale(.88); }
+  50% { opacity:1; filter:blur(26px); }
+  100% { opacity:.78; filter:blur(34px); transform:translate(-48%,-52%) scale(1.12); }
+}
+@keyframes beamBreath {
+  0%,100% { opacity:.58; filter:brightness(.8); box-shadow:0 0 6px #fff4d0,0 0 18px #f5b86499,0 0 55px #f5b86466,0 0 110px #f5b86433; }
+  50% { opacity:1; filter:brightness(1.5); box-shadow:0 0 12px #fff,0 0 32px #fff0c2,0 0 85px #f5b864,0 0 170px #f5b86488; }
+}
+.hero-grid { position: relative; display: grid; grid-template-columns: 1.08fr .92fr; gap: 44px; align-items: center; }
+.eyebrow { display:flex; align-items:center; gap:10px; margin-bottom: 28px; }
+.eyebrow:before { content:""; width:24px; height:1px; background:var(--accent); }
+h1 { max-width: 850px; margin: 0; font-size: clamp(64px, 8.55vw, 132.48px); line-height: .94; letter-spacing: -.075em; font-weight: 300; color:#fff; }
+h1 em, h2 em { font-family:var(--font-display); font-weight:300; color:var(--accent); }
+.hero-copy { max-width: 510px; margin: 30px 0 28px; color:var(--muted); font-size:14px; line-height:1.85; }
+.actions { display:flex; align-items:center; gap:24px; flex-wrap:wrap; }
+.hero-media { position:relative; min-height: 500px; border:1px solid var(--line); border-radius:20px; overflow:hidden; background:#0a0a0a; box-shadow:0 10px 30px -10px #00000080; }
+.hero-media video { width:100%; height:100%; min-height:500px; object-fit:cover; display:block; opacity:.78; }
+.media-shade { position:absolute; inset:0; background:linear-gradient(180deg,transparent 40%,#0000009c 100%),linear-gradient(90deg,#00000030,transparent); }
+.media-caption { position:absolute; left:22px; right:22px; bottom:20px; display:flex; justify-content:space-between; align-items:end; }
+.media-caption strong { display:block; font: 24px var(--font-display); font-weight:300; }
+.media-caption span { color:#ffffff8c; font:10px var(--font-mono); letter-spacing:.1em; text-transform:uppercase; }
+.hero-foot { position:relative; margin-top:54px; padding-top:18px; border-top:1px solid var(--line); display:flex; justify-content:space-between; color:var(--faint); }
+.section { padding: 128px 0; position:relative; overflow:hidden; }
+.section.dark { background:#050505; }
+.section-head { display:flex; justify-content:space-between; align-items:end; gap:30px; margin-bottom:56px; }
+.kicker { color:var(--accent); font:10px var(--font-mono); letter-spacing:.14em; text-transform:uppercase; margin-bottom:22px; }
+h2 { max-width:900px; margin:0; font-size:clamp(48px, 6vw, 79.2px); line-height:1.02; letter-spacing:-.065em; font-weight:300; }
+.section-intro { max-width:300px; color:var(--muted); font-size:13px; line-height:1.8; }
+.archive-grid { display:grid; grid-template-columns:1.2fr .8fr; gap:20px; }
+.project-card { min-width:0; position:relative; overflow:hidden; border:1px solid var(--line); border-radius:20px; background:#0a0a0a; box-shadow: inset 0 1px 0 #ffffff08, 0 10px 30px -10px #00000080; transition: border-color .3s, box-shadow .3s; }
+.project-card:hover { border-color:#f5b86466; box-shadow: 0 0 28px #f5b86414, 0 10px 30px -10px #00000080; }
+.project-card.large { min-height:510px; }
+.project-card.small { min-height:390px; margin-top:80px; }
+.project-card video, .project-card img { width:100%; height:100%; position:absolute; inset:0; object-fit:cover; opacity:.82; transition:transform .7s cubic-bezier(.2,.7,.2,1),opacity .3s; }
+.project-card:hover video, .project-card:hover img { transform:scale(1.035); opacity:1; }
+.project-card:after { content:""; position:absolute; inset:0; background:linear-gradient(180deg,transparent 35%,#000000c9 100%); pointer-events:none; }
+.project-info { position:absolute; z-index:1; left:25px; right:25px; bottom:24px; display:flex; justify-content:space-between; align-items:end; gap:20px; }
+.project-info h3 { margin:0 0 5px; font:300 30px/1.1 var(--font-display); }
+.project-info p { margin:0; color:#ffffff8c; font-size:11px; }
+.project-number { color:#ffffff8c; font:10px var(--font-mono); }
+.archive-link { margin-top:30px; display:inline-flex; color:var(--accent); font-size:12px; gap:10px; align-items:center; }
+.problem-grid { display:grid; grid-template-columns:.8fr 1.2fr; gap:20px; align-items:stretch; }
+.problem-copy { padding:36px 26px 30px 0; display:flex; flex-direction:column; justify-content:space-between; }
+.problem-copy p { max-width:360px; color:var(--muted); font-size:14px; line-height:1.9; }
+.problem-card { min-height:500px; }
+.problem-card img { object-position:center; }
+.pill-row { display:flex; flex-wrap:wrap; gap:8px; margin-top:28px; }
+.pill { border:1px solid var(--line-2); color:#ffffffb3; border-radius:999px; padding:8px 13px; font:10px var(--font-mono); }
+.model-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:14px; }
+.model-card { border:1px solid var(--line); background:#ffffff05; border-radius:16px; padding:24px; min-height:290px; display:flex; flex-direction:column; justify-content:space-between; transition:border-color .25s,background .25s,transform .25s; }
+.model-card:hover { border-color:#f5b86466; background:#f5b8640a; transform:translateY(-4px); }
+.model-icon { width:42px; height:42px; display:grid; place-items:center; border:1px solid #f5b86455; color:var(--accent); border-radius:50%; font:22px var(--font-display); }
+.model-card h3 { font:300 30px var(--font-display); margin:30px 0 8px; }
+.model-card p { color:var(--muted); font-size:12px; line-height:1.8; margin:0; }
+.model-card .mono { margin-top:22px; }
+.model-visual { margin-top:18px; height:260px; border:1px solid var(--line); border-radius:20px; overflow:hidden; position:relative; }
+.model-visual video { width:100%; height:100%; object-fit:cover; opacity:.68; }
+.process { display:grid; grid-template-columns:.9fr 1.1fr; gap:60px; }
+.process-left { position:sticky; top:120px; align-self:start; }
+.process-left p { color:var(--muted); max-width:330px; font-size:13px; line-height:1.9; margin-top:25px; }
+.steps { border-top:1px solid var(--line); }
+.step { display:grid; grid-template-columns:55px 1fr; gap:20px; padding:27px 0; border-bottom:1px solid var(--line); }
+.step-no { color:var(--accent); font:11px var(--font-mono); padding-top:5px; }
+.step h3 { margin:0 0 9px; font:300 26px var(--font-display); }
+.step p { margin:0; max-width:440px; color:var(--muted); font-size:12px; line-height:1.85; }
+.timeline { margin-top:44px; display:flex; align-items:center; gap:10px; color:var(--faint); font:10px var(--font-mono); text-transform:uppercase; letter-spacing:.1em; }
+.timeline-line { height:1px; flex:1; background:linear-gradient(90deg,var(--accent),#ffffff20); }
+.cta { padding:120px 0; background:#050505; overflow:hidden; position:relative; }
+.cta:before { content:""; position:absolute; width:600px; height:500px; right:-80px; top:-130px; background:radial-gradient(ellipse,#f5b8641c,transparent 68%); filter:blur(20px); }
+.cta-inner { position:relative; display:grid; grid-template-columns:1fr .72fr; gap:50px; align-items:center; }
+.cta h2 { max-width:800px; font-size:clamp(60px,8vw,108px); }
+.cta p { max-width:430px; color:var(--muted); font-size:14px; line-height:1.9; margin:28px 0; }
+.cta-image { height:400px; border-radius:20px; border:1px solid var(--line); overflow:hidden; position:relative; }
+.cta-image img { width:100%; height:100%; object-fit:cover; opacity:.78; }
+.cta-image:after { content:""; position:absolute; inset:0; background:linear-gradient(180deg,transparent,#00000060); }
+.cta-stamp { position:absolute; z-index:1; right:18px; bottom:18px; border:1px solid #f5b86466; color:var(--accent); border-radius:50%; width:76px; height:76px; display:grid; place-items:center; text-align:center; font:10px/1.3 var(--font-mono); transform:rotate(-12deg); }
+footer { padding:60px 0 28px; background:#000; }
+.footer-top { display:grid; grid-template-columns:1fr 1fr; gap:40px; padding-bottom:65px; border-bottom:1px solid var(--line); }
+.footer-brand { font:clamp(68px,12vw,150px)/.85 var(--font-display); letter-spacing:-.07em; }
+.footer-note { max-width:360px; justify-self:end; color:var(--muted); font-size:13px; line-height:1.9; }
+.footer-bottom { display:flex; justify-content:space-between; align-items:center; padding-top:23px; gap:20px; }
+.footer-links { display:flex; gap:25px; font-size:11px; color:var(--muted); }
+.copyright { color:var(--faint); font:10px var(--font-mono); }
+.reveal { opacity:0; transform:translateY(22px); transition:opacity .7s ease,transform .7s ease; }
+.reveal.visible { opacity:1; transform:translateY(0); }
+.scroll-fade {
+  opacity: 0; transform: translateY(34px) scale(.985);
+  transition: opacity .85s ease, transform .85s cubic-bezier(.2,.7,.2,1);
+}
+.scroll-fade.in-view { opacity: 1; transform: translateY(0) scale(1); }
+.hero-media, .cta-image { will-change: transform; }
+.project-card, .model-card { transform-style: preserve-3d; }
+.project-card.reveal { transform:translateY(28px) scale(.985); }
+.project-card.reveal.visible { transform:translateY(0) scale(1); }
+.marquee { overflow:hidden; border-block:1px solid var(--line); padding:17px 0; color:#ffffff70; font:10px var(--font-mono); letter-spacing:.16em; text-transform:uppercase; white-space:nowrap; background:linear-gradient(90deg,#000,#0a0805 50%,#000); }
+.marquee-track { display:flex; width:max-content; gap:50px; animation:marquee 32s linear infinite; will-change:transform; }
+.marquee:hover .marquee-track { animation-play-state:paused; }
+@keyframes rise { from { opacity:0; transform:translateY(24px) } to { opacity:1; transform:translateY(0) } }
+@keyframes fadein { from { opacity:0 } to { opacity:1 } }
+@keyframes marquee { to { transform:translateX(-50%) } }
+.hero .eyebrow, .hero h1, .hero .hero-copy, .hero .actions { animation:rise .8s both; }
+.hero h1 { animation-delay:.08s } .hero .hero-copy { animation-delay:.16s } .hero .actions { animation-delay:.24s }
+@media (max-width: 900px) {
+ .wrap { width:min(100% - 40px, 680px); }
+ .nav { height:68px; } .nav-links { gap:16px; } .nav-links a:not(.button-primary) { display:none; }
+ .hero { min-height:auto; padding:130px 0 55px; }
+ .hero-grid, .cta-inner, .process { grid-template-columns:1fr; gap:34px; }
+ .hero-media { min-height:390px; } .hero-media video { min-height:390px; }
+ .hero-foot { margin-top:35px; }
+ .section { padding:88px 0; }
+ .section-head { align-items:start; flex-direction:column; margin-bottom:35px; }
+ .archive-grid, .problem-grid { grid-template-columns:1fr; }
+ .project-card.large { min-height:430px; } .project-card.small { min-height:360px; margin-top:0; }
+ .problem-copy { padding:0; }
+ .model-grid { grid-template-columns:1fr 1fr; }
+ .process-left { position:static; }
+ .cta-image { height:330px; }
+ .footer-top { grid-template-columns:1fr; } .footer-note { justify-self:start; }
+}
+@media (max-width: 560px) {
+ .wrap { width:calc(100% - 36px); }
+ .brand { font-size:11px; } .nav .button-primary { padding:8px 13px; font-size:11px; }
+ h1 { font-size:clamp(57px,16vw,88px); }
+ .hero-media, .hero-media video { min-height:320px; }
+ .hero-foot { font-size:9px; gap:15px; }
+ .section { padding:76px 0; }
+ h2 { font-size:48px; }
+ .project-card.large { min-height:350px; } .project-card.small { min-height:310px; }
+ .model-grid { grid-template-columns:1fr; }
+ .model-card { min-height:240px; }
+ .step { grid-template-columns:35px 1fr; gap:12px; }
+ .cta { padding:82px 0; } .cta h2 { font-size:64px; }
+ .footer-bottom { align-items:flex-start; flex-direction:column; }
+ .footer-links { gap:18px; }
+}
+@media (max-width: 700px) { body::before { background: radial-gradient(360px circle at 50% 18%, #f5b86410, transparent 70%); } }
+@media (prefers-reduced-motion: reduce) {
+ .hero:before, .hero:after { animation:none!important; }
+ *, *:before, *:after { scroll-behavior:auto!important; animation-duration:.01ms!important; animation-iteration-count:1!important; transition-duration:.01ms!important; }
+ .reveal, .scroll-fade { opacity:1; transform:none; }
+}
+
+/* Premium art-direction pass */
+:root {
+  --accent: #eeb66d;
+  --accent-strong: #ffd08a;
+  --line: #ffffff18;
+}
+body {
+  background:
+    radial-gradient(ellipse at 78% 12%, #9a5d2410, transparent 34%),
+    radial-gradient(ellipse at 8% 58%, #c28a4510, transparent 30%),
+    #030303;
+}
+header { border-bottom-color: #ffffff0b; }
+.nav { height: 82px; }
+.brand-mark {
+  box-shadow: 0 0 22px #f5b86418, inset 0 0 12px #f5b86410;
+}
+.button-primary {
+  padding: 12px 21px;
+  box-shadow: 0 4px 24px #ffffff12;
+}
+.hero {
+  min-height: 900px;
+  padding-top: 190px;
+  background:
+    radial-gradient(ellipse at 78% 52%, #e9a64b18 0%, transparent 38%),
+    linear-gradient(115deg, #ffffff04, transparent 48%);
+}
+.hero:before {
+  width: min(1250px, 120vw);
+  opacity: .72;
+  filter: blur(38px);
+}
+.hero-grid { gap: clamp(35px, 5vw, 82px); }
+h1 { font-size: clamp(68px, 9vw, 144px); letter-spacing: -.085em; }
+.hero-copy { font-size: 15px; max-width: 470px; }
+.hero-media {
+  min-height: 560px;
+  border-color: #eeb66d30;
+  border-radius: 24px;
+  box-shadow: 0 30px 90px #000, 0 0 55px #eeb66d12;
+}
+.hero-media video { min-height: 560px; }
+.section { padding: clamp(95px, 10vw, 150px) 0; }
+.section-head { margin-bottom: 68px; }
+.kicker { letter-spacing: .2em; }
+.project-card {
+  border-radius: 22px;
+  background: linear-gradient(145deg, #17120d, #080808 65%);
+}
+.project-card.large { min-height: 570px; }
+.project-card.small { min-height: 440px; }
+.project-card:before {
+  content: "";
+  position: absolute; z-index: 1; inset: 0;
+  border-radius: inherit; pointer-events: none;
+  background: linear-gradient(135deg, #eeb66d14, transparent 38%, transparent 70%, #ffffff08);
+  opacity: .8;
+}
+.model-card {
+  min-height: 320px;
+  border-radius: 20px;
+  background: linear-gradient(145deg, #ffffff09, #ffffff03 55%, #eeb66d08);
+  box-shadow: inset 0 1px #ffffff12, 0 18px 50px #00000055;
+}
+.model-card:hover {
+  box-shadow: inset 0 1px #eeb66d44, 0 22px 55px #00000080, 0 0 35px #eeb66d12;
+}
+.step { padding: 34px 0; }
+.step h3 { font-size: 29px; }
+.cta {
+  background:
+    radial-gradient(ellipse at 78% 42%, #eeb66d12, transparent 42%),
+    #050505;
+}
+.cta-image {
+  height: 470px;
+  border-radius: 24px;
+  border-color: #eeb66d35;
+  box-shadow: 0 25px 80px #000, 0 0 45px #eeb66d10;
+}
+.cta-stamp { box-shadow: 0 0 28px #eeb66d18; }
+.footer-brand { text-shadow: 0 8px 45px #eeb66d12; }
+footer { border-top: 1px solid #ffffff0b; }
+.archive-link { padding-bottom: 6px; border-bottom: 1px solid #eeb66d55; }
+a:focus-visible, button:focus-visible {
+  outline: 2px solid var(--accent); outline-offset: 4px;
+}
+@media (max-width: 900px) {
+  .nav { height: 70px; }
+  .hero { min-height: auto; padding-top: 140px; }
+  .hero-media, .hero-media video { min-height: 430px; }
+  .project-card.large { min-height: 460px; }
+  .project-card.small { min-height: 390px; }
+  .cta-image { height: 380px; }
+}
+@media (max-width: 560px) {
+  .hero { padding-top: 125px; }
+  h1 { font-size: clamp(58px, 16vw, 86px); }
+  .hero-media, .hero-media video { min-height: 340px; }
+  .project-card.large { min-height: 370px; }
+  .project-card.small { min-height: 330px; }
+  .cta-image { height: 330px; }
+}
+
+
+/* Final premium finishing */
+.cta-image { background: #100d09; }
+.cta-image img {
+  display: block;
+  object-position: center 48%;
+  filter: saturate(.86) contrast(1.06);
+  transition: transform 1s cubic-bezier(.2,.7,.2,1), filter .5s ease;
+}
+.cta-image:hover img { transform: scale(1.045); filter: saturate(1) contrast(1.08); }
+.cta-image:after {
+  background: linear-gradient(180deg, #00000008 20%, #00000020 55%, #000000a6 100%);
+}
+.cta-stamp {
+  backdrop-filter: blur(10px);
+  background: #08070555;
+}
+@media (max-width: 560px) {
+  .cta-image { min-height: 320px; }
+  .cta-image img { min-height: 320px; object-fit: cover; }
+}
+
+
+/* Reliable fallback styling for the capabilities showcase image */
+.problem-card { background: radial-gradient(ellipse at 70% 30%, #594027 0%, #17100b 42%, #050505 100%); }
+.problem-card img { display: block; object-position: center; }
+\n</style>
+</head>
+<body>
+<div id="scroll-progress" aria-hidden="true"></div>
+<div class="cursor-dot" aria-hidden="true"></div>
+<div class="cursor-ring" aria-hidden="true"></div>
+<header id="header">
+  <div class="wrap nav">
+    <a class="brand" href="#top" aria-label="Studio home"><span class="brand-mark">M</span><span>RAVISH / AI FILM</span></a>
+    <nav class="nav-links" aria-label="Main navigation">
+      <a href="#work">Work</a><a href="#capabilities">Capabilities</a><a href="#process">Process</a>
+      <a class="button-primary" href="#contact">Start a project ↗</a>
+    </nav>
+  </div>
+</header>
+
+<main id="top">
+<section class="hero">
+  <div class="wrap">
+    <div class="hero-grid">
+      <div>
+        <div class="eyebrow mono">Independent creative studio · 2026</div>
+        <h1>The AI-native <em>video</em> production studio.</h1>
+        <p class="hero-copy">RAVISH is an AI-native film studio for brands with ambitious ideas. We turn product launches, campaigns, and bold visual concepts into cinematic films — with human direction at every frame.</p>
+        <div class="actions">
+          <a class="button-primary" href="#contact">Talk to us ↗</a>
+          <a class="button-quiet" href="#capabilities">Try AI Playground <span>↗</span></a>
+        </div>
+      </div>
+      <div class="hero-media">
+        <video autoplay loop muted playsinline preload="metadata" poster="https://media.masonry.so/uploads/9cf714e6-88b1-4ef4-abbe-36c6530131c7"><source src="https://media.masonry.so/uploads/9cf714e6-88b1-4ef4-abbe-36c6530131c7"></video>
+        <div class="media-shade"></div>
+        <div class="media-caption"><div><span>Selected frame / 001</span><strong>Made of possibility.</strong></div><span>00:08 — 00:24</span></div>
+      </div>
+    </div>
+    <div class="hero-foot mono"><span>Built for the next frame</span><span>Scroll to explore ↓</span><span>IN / OUT · 2026</span></div>
+  </div>
+</section>
+
+<div class="marquee" aria-label="Creative tools and production capabilities">
+  <div class="marquee-track">
+    <span>RAVISH STUDIO　·　AI FILMMAKING　·　KLING 3.0　·　SEEDANCE 2.0　·　NANO BANANA PRO　·　GPT IMAGE　·　CREATIVE DIRECTION　·　</span>
+    <span aria-hidden="true">RAVISH STUDIO　·　AI FILMMAKING　·　KLING 3.0　·　SEEDANCE 2.0　·　NANO BANANA PRO　·　GPT IMAGE　·　CREATIVE DIRECTION　·　</span>
+  </div>
+</div>
+
+<section class="section dark" id="work">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <div><div class="kicker">01 / Selected work</div><h2>Films made by directing machines, <em>not prompting them.</em></h2></div>
+      <p class="section-intro">A new kind of production partner. Human-led creative direction, powered by the world's most capable generative tools.</p>
+    </div>
+    <div class="archive-grid">
+      <article class="project-card large reveal">
+        <video autoplay loop muted playsinline preload="metadata"><source src="https://media.masonry.so/uploads/2c153fc3-bb4e-4f89-af35-84121e1e371a"></video>
+        <div class="project-info"><div><h3>Objects in motion</h3><p>Product film · Art direction · 2026</p></div><span class="project-number">01 / 04</span></div>
+      </article>
+      <article class="project-card small reveal">
+        <video autoplay loop muted playsinline preload="metadata"><source src="https://media.masonry.so/uploads/38398ea5-411b-43d4-93ce-bf7703372685"></video>
+        <div class="project-info"><div><h3>Beyond the ordinary</h3><p>Campaign · World building · 2026</p></div><span class="project-number">02 / 04</span></div>
+      </article>
+    </div>
+    <a class="archive-link" href="#contact">View the full archive <span>→</span></a>
+  </div>
+</section>
+
+<section class="section" id="capabilities">
+  <div class="wrap">
+    <div class="problem-grid">
+      <div class="problem-copy reveal">
+        <div><div class="kicker">02 / Creative problem solving</div><h2>Hard problems, <em>solved beautifully.</em></h2>
+        <p>Big ideas shouldn't be limited by traditional production constraints. We turn ambitious creative direction into polished, high-performing films — without the usual friction.</p></div>
+        <div class="pill-row"><span class="pill">Product launches</span><span class="pill">Brand worlds</span><span class="pill">Paid social</span><span class="pill">Film & motion</span></div>
+      </div>
+      <article class="project-card problem-card reveal">
+        <img
+          src="https://images.unsplash.com/photo-1534447677768-be436bb09401?auto=format&fit=crop&w=1600&q=85"
+          alt="Cinematic abstract night sky with glowing stars"
+          loading="lazy"
+          decoding="async"
+          onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1462331940025-496dfbfc7564?auto=format&fit=crop&w=1600&q=85';"
+        >
+        <div class="project-info"><div><h3>Impossible, made tangible.</h3><p>Creative systems for ambitious brands</p></div><span class="project-number">03 / 04</span></div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<section class="section dark">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <div><div class="kicker">03 / The production stack</div><h2>One studio. <em>Every model that matters.</em></h2></div>
+      <p class="section-intro">We choose the right tools for the idea — not the other way around. A flexible creative pipeline, orchestrated by people who know the frame.</p>
+    </div>
+    <div class="model-grid">
+      <article class="model-card reveal"><div><div class="model-icon">✳</div><h3>Image systems</h3><p>Distinctive worlds, considered composition, and art direction with a point of view.</p></div><div class="mono">01 — Imagine</div></article>
+      <article class="model-card reveal"><div><div class="model-icon">↗</div><h3>Motion engines</h3><p>From a single frame to a moving image. Controlled motion, intentional pacing, cinematic detail.</p></div><div class="mono">02 — Animate</div></article>
+      <article class="model-card reveal"><div><div class="model-icon">◌</div><h3>Human direction</h3><p>Creative judgement at every step: taste, continuity, story, and the final ten percent.</p></div><div class="mono">03 — Refine</div></article>
+    </div>
+    <div class="model-visual reveal"><video autoplay loop muted playsinline preload="metadata"><source src="https://media.masonry.so/uploads/9cf714e6-88b1-4ef4-abbe-36c6530131c7"></video></div>
+  </div>
+</section>
+
+<section class="section" id="process">
+  <div class="wrap process">
+    <div class="process-left reveal"><div class="kicker">04 / The new production timeline</div><h2>Three weeks of production, <em>compressed into two days.</em></h2><p>Less waiting around. More room to explore, iterate, and get to the version that feels inevitable. A tight process with space for the unexpected.</p><div class="timeline"><span>Day 01</span><span class="timeline-line"></span><span>Day 02</span></div></div>
+    <div class="steps reveal">
+      <div class="step"><span class="step-no">01</span><div><h3>Find the signal</h3><p>We get close to the brief, find the sharpest idea, and build a visual direction worth following.</p></div></div>
+      <div class="step"><span class="step-no">02</span><div><h3>Build the world</h3><p>We develop the look, lock the creative system, and create the frames that set everything in motion.</p></div></div>
+      <div class="step"><span class="step-no">03</span><div><h3>Direct the impossible</h3><p>Models become a production crew. We guide, curate, and refine every sequence with intent.</p></div></div>
+      <div class="step"><span class="step-no">04</span><div><h3>Make it land</h3><p>Editorial, sound, finishing, and delivery. Every detail earns its place in the final cut.</p></div></div>
+    </div>
+  </div>
+</section>
+
+<section class="cta" id="contact">
+  <div class="wrap cta-inner">
+    <div class="reveal"><div class="kicker">05 / Your next film starts here</div><h2>Let's make <em>something</em> together.</h2><p>Have a product to launch, a story to tell, or a brief that feels a little impossible? That's usually where the good stuff starts.</p>
+      <div class="actions"><a class="button-primary" href="mailto:hello@ravish.studio">Start a project ↗</a><a class="button-quiet" href="mailto:hello@ravish.studio?subject=Book%20a%20call">Book a call ↗</a><a class="button-quiet" href="#capabilities">Enter the Playground ↗</a></div>
+    </div>
+    <div class="cta-image reveal">
+        <img
+          src="https://images.unsplash.com/photo-1519608487953-e999c86e7455?auto=format&fit=crop&w=1400&q=85"
+          alt="Dreamlike cinematic night sky over a dramatic landscape"
+          loading="lazy"
+          decoding="async"
+          onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1470770841072-f978cf4d019e?auto=format&fit=crop&w=1400&q=85';"
+        >
+        <div class="cta-stamp">MAKE<br>IT<br>MATTER</div>
+      </div>
+  </div>
+</section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <div class="footer-top">
+      <div><div class="mono">Independent creative studio</div><div class="footer-brand">RAVISH<span style="color:var(--accent)">.</span></div></div>
+      <p class="footer-note">Currently booking Q2–Q3 2026. Product videos, brand films, launch campaigns, and the occasional impossible ask.</p>
+    </div>
+    <div class="footer-bottom">
+      <span class="copyright">© 2026 RAVISH — MADE WITH INTENTION</span>
+      <nav class="footer-links" aria-label="Footer navigation"><a href="#work">Work</a><a href="#capabilities">Capabilities</a><a href="#process">Process</a></nav>
+      <span class="copyright">INDIA · EVERYWHERE</span>
+    </div>
+  </div>
+</footer>
+<script>
+const header = document.getElementById('header');
+const progress = document.getElementById('scroll-progress');
+const root = document.documentElement;
+const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+const finePointer = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+
+// Smoothly update the sticky header and top reading-progress line.
+const updateScrollUI = () => {
+  const maxScroll = root.scrollHeight - window.innerHeight;
+  const amount = maxScroll > 0 ? (window.scrollY / maxScroll) * 100 : 0;
+  progress.style.width = amount + '%';
+  header.classList.toggle('scrolled', window.scrollY > 24);
+};
+updateScrollUI();
+window.addEventListener('scroll', updateScrollUI, { passive: true });
+window.addEventListener('resize', updateScrollUI, { passive: true });
+
+// Ambient spotlight + custom cursor that gently follows the pointer.
+if (finePointer && !reduceMotion) {
+  const dot = document.querySelector('.cursor-dot');
+  const ring = document.querySelector('.cursor-ring');
+  let mouseX = window.innerWidth / 2, mouseY = window.innerHeight / 2;
+  let ringX = mouseX, ringY = mouseY;
+  let rafPending = false;
+
+  const paintCursor = () => {
+    ringX += (mouseX - ringX) * 0.16;
+    ringY += (mouseY - ringY) * 0.16;
+    dot.style.left = mouseX + 'px';
+    dot.style.top = mouseY + 'px';
+    ring.style.left = ringX + 'px';
+    ring.style.top = ringY + 'px';
+    rafPending = false;
+    if (Math.abs(mouseX - ringX) > .3 || Math.abs(mouseY - ringY) > .3) {
+      rafPending = true;
+      requestAnimationFrame(paintCursor);
+    }
+  };
+
+  window.addEventListener('pointermove', event => {
+    mouseX = event.clientX;
+    mouseY = event.clientY;
+    root.style.setProperty('--pointer-x', mouseX + 'px');
+    root.style.setProperty('--pointer-y', mouseY + 'px');
+    document.body.classList.add('cursor-active');
+    if (!rafPending) {
+      rafPending = true;
+      requestAnimationFrame(paintCursor);
+    }
+  }, { passive: true });
+
+  document.querySelectorAll('a, button, .project-card, .model-card').forEach(el => {
+    el.addEventListener('pointerenter', () => document.body.classList.add('cursor-hover'));
+    el.addEventListener('pointerleave', () => document.body.classList.remove('cursor-hover'));
+  });
+  document.addEventListener('pointerleave', () => document.body.classList.remove('cursor-active'));
+}
+
+// Reveal content as it enters the viewport.
+if ('IntersectionObserver' in window) {
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible', 'in-view');
+        observer.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.12, rootMargin: '0px 0px -35px 0px' });
+  document.querySelectorAll('.reveal, .scroll-fade').forEach(el => observer.observe(el));
+} else {
+  document.querySelectorAll('.reveal, .scroll-fade').forEach(el => el.classList.add('visible', 'in-view'));
+}
+
+// Subtle depth/parallax while scrolling, disabled on touch devices and reduced-motion setups.
+if (finePointer && !reduceMotion) {
+  const heroMedia = document.querySelector('.hero-media');
+  let ticking = false;
+  const updateParallax = () => {
+    const y = Math.min(window.scrollY, 700);
+    if (heroMedia) heroMedia.style.transform = `translate3d(0, ${y * 0.045}px, 0)`;
+    ticking = false;
+  };
+  window.addEventListener('scroll', () => {
+    if (!ticking) {
+      ticking = true;
+      requestAnimationFrame(updateParallax);
+    }
+  }, { passive: true });
+}
+
+// Keep all showcase videos muted and attempt autoplay without blocking the page.
+document.querySelectorAll('video').forEach(video => {
+  video.muted = true;
+  const play = video.play();
+  if (play && typeof play.catch === 'function') play.catch(() => {});
+});
+</script>
+</body>
+</html>
