@@ -39,15 +39,20 @@ html { scroll-behavior: smooth; background: var(--bg); }
   position: fixed; top: 0; left: 0; z-index: 99; pointer-events: none;
   border-radius: 50%; opacity: 0; transform: translate(-50%, -50%);
 }
-.cursor-dot { width: 6px; height: 6px; background: var(--accent); }
+.cursor-dot { width: 7px; height: 7px; background: #fff2cf; box-shadow: 0 0 8px #fff, 0 0 18px var(--accent), 0 0 30px #f5b864aa; }
 .cursor-ring {
   width: 34px; height: 34px; border: 1px solid #f5b864a8;
-  background: #f5b8640d; transition: width .22s ease, height .22s ease,
-    background .22s ease, border-color .22s ease, opacity .2s ease;
+  background: #f5b86412; box-shadow: 0 0 12px #f5b86466, inset 0 0 10px #f5b86422;
+  transition: width .22s ease, height .22s ease, background .22s ease,
+    border-color .22s ease, opacity .2s ease, box-shadow .22s ease;
 }
+@keyframes cursorPulse { 0%,100% { box-shadow: 0 0 12px #f5b86466, inset 0 0 10px #f5b86422; } 50% { box-shadow: 0 0 24px #f5b864cc, 0 0 42px #f5b86466, inset 0 0 16px #f5b86455; } }
+body.cursor-active .cursor-ring { animation: cursorPulse 1.5s ease-in-out infinite; }
+
 body.cursor-active .cursor-dot, body.cursor-active .cursor-ring { opacity: 1; }
 body.cursor-hover .cursor-ring {
-  width: 54px; height: 54px; background: #f5b8641c; border-color: var(--accent);
+  width: 58px; height: 58px; background: #f5b8642b; border-color: #fff0c2;
+  box-shadow: 0 0 22px #f5b864dd, 0 0 48px #f5b86488, inset 0 0 18px #f5b86466;
 }
 @media (hover: none), (pointer: coarse) {
   .cursor-dot, .cursor-ring { display: none; }
@@ -56,9 +61,10 @@ body.cursor-hover .cursor-ring {
 :root { --pointer-x: 50vw; --pointer-y: 32vh; }
 body::before {
   content: ""; position: fixed; inset: 0; z-index: 0; pointer-events: none;
-  background: radial-gradient(520px circle at var(--pointer-x) var(--pointer-y), #f5b86412, transparent 68%);
-  opacity: .9; transition: opacity .25s ease;
+  background: radial-gradient(560px circle at var(--pointer-x) var(--pointer-y), #f5b86424, #f5b8640b 34%, transparent 70%);
+  opacity: .95; transition: opacity .25s ease;
 }
+body.cursor-active::before { opacity: 1; }
 body::after {
   content: ""; position: fixed; z-index: 0; pointer-events: none;
   width: 440px; height: 440px; left: -180px; bottom: -210px; border-radius: 50%;
@@ -127,6 +133,13 @@ h1 em, h2 em { font-family:var(--font-display); font-weight:300; color:var(--acc
 .actions { display:flex; align-items:center; gap:24px; flex-wrap:wrap; }
 .hero-media { position:relative; min-height: 500px; border:1px solid var(--line); border-radius:20px; overflow:hidden; background:#0a0a0a; box-shadow:0 10px 30px -10px #00000080; }
 .hero-media video { width:100%; height:100%; min-height:500px; object-fit:cover; display:block; opacity:.78; }
+/* Video previews play on hover (desktop) or tap (mobile). */
+.hero-media, .project-card, .model-visual { cursor: pointer; }
+.video-hint { position:absolute; z-index:3; top:16px; right:16px; padding:8px 11px; border:1px solid #ffffff55; border-radius:999px; background:#0009; color:#fff; font:10px var(--font-mono); letter-spacing:.08em; text-transform:uppercase; backdrop-filter:blur(8px); pointer-events:none; opacity:.9; transition:opacity .2s; }
+.video-hint::before { content:"▶  "; color:var(--accent); }
+.video-playing .video-hint { opacity:0; }
+@media (hover:hover) and (pointer:fine) { .hero-media:hover .video-hint, .project-card:hover .video-hint, .model-visual:hover .video-hint { opacity:0; } }
+
 .media-shade { position:absolute; inset:0; background:linear-gradient(180deg,transparent 40%,#0000009c 100%),linear-gradient(90deg,#00000030,transparent); }
 .media-caption { position:absolute; left:22px; right:22px; bottom:20px; display:flex; justify-content:space-between; align-items:end; }
 .media-caption strong { display:block; font: 24px var(--font-display); font-weight:300; }
@@ -413,7 +426,8 @@ a:focus-visible, button:focus-visible {
         </div>
       </div>
       <div class="hero-media">
-        <video autoplay loop muted playsinline preload="metadata" poster="https://media.masonry.so/uploads/9cf714e6-88b1-4ef4-abbe-36c6530131c7"><source src="https://media.masonry.so/uploads/9cf714e6-88b1-4ef4-abbe-36c6530131c7"></video>
+        <video loop muted playsinline preload="none" poster="https://media.masonry.so/uploads/9cf714e6-88b1-4ef4-abbe-36c6530131c7"><source src="https://media.masonry.so/uploads/9cf714e6-88b1-4ef4-abbe-36c6530131c7"></video>
+        <span class="video-hint">Hover to play</span>
         <div class="media-shade"></div>
         <div class="media-caption"><div><span>Selected frame / 001</span><strong>Made of possibility.</strong></div><span>00:08 — 00:24</span></div>
       </div>
@@ -437,11 +451,13 @@ a:focus-visible, button:focus-visible {
     </div>
     <div class="archive-grid">
       <article class="project-card large reveal">
-        <video autoplay loop muted playsinline preload="metadata"><source src="https://media.masonry.so/uploads/2c153fc3-bb4e-4f89-af35-84121e1e371a"></video>
+        <video loop muted playsinline preload="none"><source src="https://media.masonry.so/uploads/2c153fc3-bb4e-4f89-af35-84121e1e371a"></video>
+        <span class="video-hint">Hover to play</span>
         <div class="project-info"><div><h3>Objects in motion</h3><p>Product film · Art direction · 2026</p></div><span class="project-number">01 / 04</span></div>
       </article>
       <article class="project-card small reveal">
-        <video autoplay loop muted playsinline preload="metadata"><source src="https://media.masonry.so/uploads/38398ea5-411b-43d4-93ce-bf7703372685"></video>
+        <video loop muted playsinline preload="none"><source src="https://media.masonry.so/uploads/38398ea5-411b-43d4-93ce-bf7703372685"></video>
+        <span class="video-hint">Hover to play</span>
         <div class="project-info"><div><h3>Beyond the ordinary</h3><p>Campaign · World building · 2026</p></div><span class="project-number">02 / 04</span></div>
       </article>
     </div>
@@ -482,7 +498,7 @@ a:focus-visible, button:focus-visible {
       <article class="model-card reveal"><div><div class="model-icon">↗</div><h3>Motion engines</h3><p>From a single frame to a moving image. Controlled motion, intentional pacing, cinematic detail.</p></div><div class="mono">02 — Animate</div></article>
       <article class="model-card reveal"><div><div class="model-icon">◌</div><h3>Human direction</h3><p>Creative judgement at every step: taste, continuity, story, and the final ten percent.</p></div><div class="mono">03 — Refine</div></article>
     </div>
-    <div class="model-visual reveal"><video autoplay loop muted playsinline preload="metadata"><source src="https://media.masonry.so/uploads/9cf714e6-88b1-4ef4-abbe-36c6530131c7"></video></div>
+    <div class="model-visual reveal"><video loop muted playsinline preload="none"><source src="https://media.masonry.so/uploads/9cf714e6-88b1-4ef4-abbe-36c6530131c7"></video><span class="video-hint">Hover to play</span></div>
   </div>
 </section>
 
@@ -621,11 +637,40 @@ if (finePointer && !reduceMotion) {
   }, { passive: true });
 }
 
-// Keep all showcase videos muted and attempt autoplay without blocking the page.
-document.querySelectorAll('video').forEach(video => {
+// Play video previews when the visitor points at them (desktop) or taps them (mobile).
+const videoCards = document.querySelectorAll('.hero-media, .project-card, .model-visual');
+videoCards.forEach(card => {
+  const video = card.querySelector('video');
+  if (!video) return;
+  video.autoplay = false;
   video.muted = true;
-  const play = video.play();
-  if (play && typeof play.catch === 'function') play.catch(() => {});
+  video.pause();
+  const startVideo = () => {
+    const result = video.play();
+    if (result && typeof result.then === 'function') {
+      result.then(() => card.classList.add('video-playing'))
+        .catch(() => card.classList.remove('video-playing'));
+    }
+  };
+  const stopVideo = () => {
+    video.pause();
+    card.classList.remove('video-playing');
+  };
+  if (finePointer) {
+    card.addEventListener('pointerenter', startVideo);
+    card.addEventListener('pointerleave', stopVideo);
+  } else {
+    card.setAttribute('role', 'button');
+    card.setAttribute('tabindex', '0');
+    card.setAttribute('aria-label', 'Tap to play or pause video preview');
+    card.addEventListener('click', () => video.paused ? startVideo() : stopVideo());
+    card.addEventListener('keydown', event => {
+      if (event.key === 'Enter' || event.key === ' ') {
+        event.preventDefault();
+        video.paused ? startVideo() : stopVideo();
+      }
+    });
+  }
 });
 </script>
 </body>
